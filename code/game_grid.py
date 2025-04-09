@@ -115,3 +115,23 @@ class GameGrid:
                   self.game_over = True
       # return the value of the game_over flag
       return self.game_over
+
+   def check_merge(self):
+      n_rows, n_cols = len(self.tile_matrix), len(self.tile_matrix[0])
+      merges = []
+
+      for col in range(n_cols):
+         prev = None
+         for row in range(n_rows):
+            curr = self.tile_matrix[row][col]
+            if (prev is not None and curr is not None
+                    and curr.number == prev):
+                merges.append((row - 1, col))
+                merges.append((row, col))
+                break
+            if curr is not None:
+               prev = curr.number
+            else:
+               prev = None
+
+      return merges

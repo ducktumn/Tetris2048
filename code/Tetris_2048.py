@@ -67,6 +67,11 @@ def start():
          tiles, pos = current_tetromino.get_min_bounded_tile_matrix(True)
          # update the game grid by locking the tiles of the landed tetromino
          game_over = grid.update_grid(tiles, pos)
+
+         # get a list of tuples which contain coordinates of tiles that need to be merged
+         # each two tuples are to be merged, first being the one below, the second above
+         merges = grid.check_merge()
+
          # end the main game loop if the game is over
          if game_over:
             break
