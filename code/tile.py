@@ -9,12 +9,13 @@ class Tile:
    # the value of the boundary thickness (for the boxes around the tiles)
    boundary_thickness = 0.001
    # font family and font size used for displaying the tile number
-   font_family, font_size = "Sans Serif", 25
+   font_family, font_size = "Sans Serif", 23
 
    # A constructor that creates a tile with 2 as the number on it
    def __init__(self):
       # set the number on this tile
       self.number = (randint(1, 2)*2)
+      
       # set the colors of this tile
       if self.number == 2:
          self.background_color = COLOR_DICT[2][0]  # background (tile) color
