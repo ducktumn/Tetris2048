@@ -1,5 +1,5 @@
 import lib.stddraw as stddraw  # used for drawing the tiles to display them
-from lib.color import Color  # used for coloring the tiles
+from lib.color import Color, COLOR_DICT   # used for coloring the tiles
 from random import randint
 
 # A class for modeling numbered tiles as in 2048
@@ -7,18 +7,23 @@ class Tile:
    # Class variables shared among all Tile objects
    # ---------------------------------------------------------------------------
    # the value of the boundary thickness (for the boxes around the tiles)
-   boundary_thickness = 0.004
+   boundary_thickness = 0.001
    # font family and font size used for displaying the tile number
-   font_family, font_size = "Arial", 14
+   font_family, font_size = "Sans Serif", 25
 
    # A constructor that creates a tile with 2 as the number on it
    def __init__(self):
       # set the number on this tile
       self.number = (randint(1, 2)*2)
       # set the colors of this tile
-      self.background_color = Color(151, 178, 199)  # background (tile) color
-      self.foreground_color = Color(0, 100, 200)  # foreground (number) color
-      self.box_color = Color(0, 100, 200)  # box (boundary) color
+      if self.number == 2:
+         self.background_color = COLOR_DICT[2][0]  # background (tile) color
+         self.foreground_color = COLOR_DICT[2][1]  # foreground (number) color
+      else:
+         self.background_color = COLOR_DICT[4][0]  # background (tile) color
+         self.foreground_color = COLOR_DICT[4][1]  # foreground (number) color
+
+      self.box_color = Color(187, 173, 159)  # box (boundary) color
 
    # A method for drawing this tile at a given position with a given length
    def draw(self, position, length=1):  # length defaults to 1
