@@ -119,9 +119,9 @@ def display_game_menu(grid_height, grid_width):
    # add the image to the drawing canvas
    stddraw.picture(image_to_display, img_center_x, img_center_y)
    # the dimensions for the start game button
-   button_w, button_h = grid_width - 1.5, 2
+   button_w, button_h = grid_width - 8, 1
    # the coordinates of the bottom left corner for the start game button
-   button_blc_x, button_blc_y = img_center_x - button_w / 2, 4
+   button_blc_x, button_blc_y = img_center_x - button_w / 2, 4.5
    # add the start game button as a filled rectangle
    stddraw.setPenColor(button_color)
    stddraw.filledRectangle(button_blc_x, button_blc_y, button_w, button_h)
@@ -129,7 +129,7 @@ def display_game_menu(grid_height, grid_width):
    stddraw.setFontFamily("Sans Serif")
    stddraw.setFontSize(40)
    stddraw.setPenColor(text_color)
-   text_to_display = "Click Here to Start the Game"
+   text_to_display = "Start"
    stddraw.text(img_center_x, 5, text_to_display)
    # the user interaction loop for the simple menu
    while True:
