@@ -2,6 +2,7 @@ import lib.stddraw as stddraw  # used for displaying the game grid
 from lib.color import Color  # used for coloring the game grid
 from point import Point  # used for tile positions
 import numpy as np  # fundamental Python module for scientific computing
+import copy
 
 # A class for modeling the game grid
 class GameGrid:
@@ -135,3 +136,20 @@ class GameGrid:
                prev = None
 
       return merges
+   
+   #Merges two tiles
+   def merge_tiles(self, row, col):
+      cell = self.tile_matrix[row][col]
+      if cell is not None:
+         cell.number = cell.number * 2
+         self.tile_matrix[row+1][col] = None
+         self.fall_after_merge(row, col)
+   #Moves the column above the tiles after a merge
+   def fall_after_merge(self, row, col):
+      current_row = row+2
+      current_tile = copy.deepcopy(self.tile_matrix[current_row][col])
+      while current_tile is not None:
+        self.tile_matrix[current_row][col] = None
+        self.tile_matrix[current_row - 1][col] = current_tile
+        current_row = current_row + 1
+        current_tile = self.tile_matrix[current_row][col]

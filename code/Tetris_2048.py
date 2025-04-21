@@ -71,6 +71,10 @@ def start():
          # get a list of tuples which contain coordinates of tiles that need to be merged
          # each two tuples are to be merged, first being the one below, the second above
          merges = grid.check_merge()
+         while merges:
+            for i in range(len(merges)//2):
+               grid.merge_tiles(merges[i*2][0], merges[i*2][1])
+            merges = grid.check_merge()
 
          # end the main game loop if the game is over
          if game_over:
