@@ -118,7 +118,7 @@ class GameGrid:
       return self.game_over
 
    def check_merge(self):
-      n_rows, n_cols = len(self.tile_matrix), len(self.tile_matrix[0])
+      n_rows, n_cols = self.grid_height, self.grid_width
       merges = []
 
       for col in range(n_cols):
@@ -152,4 +152,4 @@ class GameGrid:
         self.tile_matrix[current_row][col] = None
         self.tile_matrix[current_row - 1][col] = current_tile
         current_row = current_row + 1
-        current_tile = self.tile_matrix[current_row][col]
+        current_tile = copy.deepcopy(self.tile_matrix[current_row][col])
