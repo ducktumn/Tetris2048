@@ -6,8 +6,6 @@ from random import randint
 class Tile:
    # Class variables shared among all Tile objects
    # ---------------------------------------------------------------------------
-   # the value of the boundary thickness (for the boxes around the tiles)
-   boundary_thickness = 0.001
    # font family and font size used for displaying the tile number
    font_family, font_size = "Sans Serif", 23
 
@@ -30,11 +28,8 @@ class Tile:
    def draw(self, position, length=1):  # length defaults to 1
       # draw the tile as a filled square
       stddraw.setPenColor(self.background_color)
-      stddraw.filledSquare(position.x, position.y, length / 2)
-      # draw the bounding box around the tile as a square
-      stddraw.setPenColor(self.box_color)
-      stddraw.setPenRadius(Tile.boundary_thickness)
-      stddraw.square(position.x, position.y, length / 2)
+      stddraw.filledSquare(position.x+0.04, position.y-0.03, length / 2)
+      
       stddraw.setPenRadius()  # reset the pen radius to its default value
       # draw the number on the tile
       stddraw.setPenColor(self.foreground_color)

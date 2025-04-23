@@ -17,10 +17,10 @@ def start():
    # set the dimensions of the game grid
    grid_h, grid_w = 20, 12
    # set the size of the drawing canvas (the displayed window)
-   canvas_h, canvas_w = 50 * grid_h, 50 * grid_w 
+   canvas_h, canvas_w = 45 * grid_h, 45 * grid_w + 180
    stddraw.setCanvasSize(canvas_w, canvas_h)
    # set the scale of the coordinate system for the drawing canvas
-   stddraw.setXscale(-0.5, grid_w - 0.5)
+   stddraw.setXscale(-0.5, grid_w + 4 - 0.5)
    stddraw.setYscale(-0.5, grid_h - 0.5)
 
    # set the game grid dimension values stored and used in the Tetromino class
@@ -35,7 +35,7 @@ def start():
 
    # display a simple menu before opening the game
    # by using the display_game_menu function defined below
-   display_game_menu(grid_h, grid_w)
+   display_game_menu(grid_h, grid_w + 4)
 
    # the main game loop
    while True:
@@ -121,7 +121,7 @@ def display_game_menu(grid_height, grid_width):
    # add the image to the drawing canvas
    stddraw.picture(image_to_display, img_center_x, img_center_y)
    # the dimensions for the start game button
-   button_w, button_h = grid_width - 8, 1
+   button_w, button_h = grid_width - 12, 1
    # the coordinates of the bottom left corner for the start game button
    button_blc_x, button_blc_y = img_center_x - button_w / 2, 4.5
    # add the start game button as a filled rectangle

@@ -27,9 +27,9 @@ class GameGrid:
       self.empty_cell_color = Color(203, 191, 177)
       # set the colors used for the grid lines and the grid boundaries
       self.line_color = Color(187, 173, 159)
-      self.boundary_color = Color(187, 173, 159)
+      self.boundary_color = Color(71, 64, 71)
       # thickness values used for the grid lines and the grid boundaries
-      self.line_thickness = 0.002
+      self.line_thickness = 0.003
       self.box_thickness = self.line_thickness
 
    # A method for displaying the game grid
