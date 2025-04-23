@@ -14,6 +14,8 @@ import random  # used for creating tetrominoes with random types (shapes)
 
 # The main function where this program starts execution
 def start():
+   # Score
+   score = 0
    # set the dimensions of the game grid
    grid_h, grid_w = 20, 12
    # set the size of the drawing canvas (the displayed window)
@@ -87,11 +89,11 @@ def start():
          grid.current_tetromino = current_tetromino
 
       # display the game grid with the current tetromino
-      grid.display()
-
+      grid.display(score)
+      
    # print a message on the console when the game is over
    print("Game over")
-
+   
 # A function for creating random shaped tetrominoes to enter the game grid
 def create_tetromino():
    # the type (shape) of the tetromino is determined randomly
