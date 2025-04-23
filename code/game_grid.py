@@ -60,14 +60,16 @@ class GameGrid:
       # Box around the text
       score_box_color = Color(88, 90, 107)
       stddraw.setPenColor(score_box_color)
-      stddraw.filledRectangle(11.5, 14.5, 4, 1)
+      stddraw.filledRectangle(11.5, 13.5, 4, 2)
 
       # Adds the score text
       stddraw.setFontFamily("Helvetica")
       stddraw.setFontSize(35)
       stddraw.setPenColor(Color(208, 210, 227))
-      text_to_display = "SCORE: " + str(score)
+      text_to_display = "SCORE" 
       stddraw.text(13.5, 15, text_to_display)
+      text_to_display = str(score)
+      stddraw.text(13.5, 14, text_to_display)
 
       # Resets the pencil
       stddraw.setPenRadius()
