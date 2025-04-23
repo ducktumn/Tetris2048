@@ -75,6 +75,7 @@ def start():
             for i in range(len(merges)//2):
                grid.merge_tiles(merges[i*2][0], merges[i*2][1])
             merges = grid.check_merge()
+         grid.drop_the_clumps()
 
          # end the main game loop if the game is over
          if game_over:
