@@ -148,8 +148,8 @@ class GameGrid:
       cell = self.tile_matrix[row][col]
       if cell is not None:
          cell.number = cell.number * 2
-         cell.background_color = COLOR_DICT[cell.number*2][0] 
-         cell.foreground_color = COLOR_DICT[cell.number*2][1]
+         cell.background_color = COLOR_DICT[cell.number][0] 
+         cell.foreground_color = COLOR_DICT[cell.number][1]
          self.tile_matrix[row+1][col] = None
          self.fall_after_merge(row, col)
    # Moves the column above the tiles after a merge
@@ -176,7 +176,7 @@ class GameGrid:
             self.get_connected_tiles((row,col+1), tile_set, check_set)
          if (row,col-1) not in check_set:
             self.get_connected_tiles((row,col-1), tile_set, check_set)
-   # Applies get_connected_tiles to (almost) all tiles and returns a complete list of floating clumps(set of connected tiles)
+   # Applies get_connected_tiles to (almost) all tiles and returns a complete list of floating clumps(set of not connected tiles)
    def get_list_of_clumps(self):
       checked_tiles = set()
       total_clumps = []

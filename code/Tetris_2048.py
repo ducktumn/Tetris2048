@@ -17,7 +17,7 @@ def start():
    # set the dimensions of the game grid
    grid_h, grid_w = 20, 12
    # set the size of the drawing canvas (the displayed window)
-   canvas_h, canvas_w = 40 * grid_h, 40 * grid_w
+   canvas_h, canvas_w = 50 * grid_h, 50 * grid_w 
    stddraw.setCanvasSize(canvas_w, canvas_h)
    # set the scale of the coordinate system for the drawing canvas
    stddraw.setXscale(-0.5, grid_w - 0.5)
@@ -71,11 +71,12 @@ def start():
          # get a list of tuples which contain coordinates of tiles that need to be merged
          # each two tuples are to be merged, first being the one below, the second above
          merges = grid.check_merge()
+         grid.drop_the_clumps()
          while merges:
             for i in range(len(merges)//2):
                grid.merge_tiles(merges[i*2][0], merges[i*2][1])
+            grid.drop_the_clumps()
             merges = grid.check_merge()
-         grid.drop_the_clumps()
 
          # end the main game loop if the game is over
          if game_over:
