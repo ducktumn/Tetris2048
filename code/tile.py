@@ -8,7 +8,8 @@ class Tile:
    # ---------------------------------------------------------------------------
    # font family and font size used for displaying the tile number
    font_family, font_size = "Sans Serif", 23
-
+   # the value of the boundary thickness (for the boxes around the tiles)
+   boundary_thickness = 0.003
    # A constructor that creates a tile with 2 as the number on it
    def __init__(self):
       # set the number on this tile
@@ -30,6 +31,10 @@ class Tile:
       stddraw.setPenColor(self.background_color)
       stddraw.filledSquare(position.x+0.04, position.y-0.03, length / 2)
       
+      # draw the bounding box around the tile as a square
+      stddraw.setPenColor(self.box_color)
+      stddraw.setPenRadius(Tile.boundary_thickness)
+      stddraw.square(position.x+0.04, position.y-0.03, length / 2)
       stddraw.setPenRadius()  # reset the pen radius to its default value
       # draw the number on the tile
       stddraw.setPenColor(self.foreground_color)
