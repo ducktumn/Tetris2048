@@ -38,6 +38,7 @@ def start():
    # display a simple menu before opening the game
    # by using the display_game_menu function defined below
    display_game_menu(grid_h, grid_w + 4)
+   full_rows = []
 
    # the main game loop
    while True:
@@ -62,6 +63,11 @@ def start():
 
       # move the active tetromino down by one at each iteration (auto fall)
       success = current_tetromino.move("down", grid)
+
+      if len(full_rows) != 0:
+         grid.remove_full_rows(full_rows)
+         full_rows = []
+
       # lock the active tetromino onto the grid when it cannot go down anymore
       if not success:
          # get the tile matrix of the tetromino without empty rows and columns
@@ -79,6 +85,8 @@ def start():
                grid.merge_tiles(merges[i*2][0], merges[i*2][1])
             grid.drop_the_clumps()
             merges = grid.check_merge()
+
+         full_rows = grid.find_full_rows()
 
          # end the main game loop if the game is over
          if game_over:
