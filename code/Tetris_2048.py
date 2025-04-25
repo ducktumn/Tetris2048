@@ -14,13 +14,15 @@ import random  # used for creating tetrominoes with random types (shapes)
 
 # The main function where this program starts execution
 def start():
+   # Score
+   score = 0
    # set the dimensions of the game grid
    grid_h, grid_w = 20, 12
    # set the size of the drawing canvas (the displayed window)
-   canvas_h, canvas_w = 40 * grid_h, 40 * grid_w
+   canvas_h, canvas_w = 45 * grid_h, 45 * grid_w + 180
    stddraw.setCanvasSize(canvas_w, canvas_h)
    # set the scale of the coordinate system for the drawing canvas
-   stddraw.setXscale(-0.5, grid_w - 0.5)
+   stddraw.setXscale(-0.5, grid_w + 4 - 0.5)
    stddraw.setYscale(-0.5, grid_h - 0.5)
 
    # set the game grid dimension values stored and used in the Tetromino class
@@ -35,7 +37,7 @@ def start():
 
    # display a simple menu before opening the game
    # by using the display_game_menu function defined below
-   display_game_menu(grid_h, grid_w)
+   display_game_menu(grid_h, grid_w + 4)
 
    # the main game loop
    while True:
@@ -71,9 +73,11 @@ def start():
          # get a list of tuples which contain coordinates of tiles that need to be merged
          # each two tuples are to be merged, first being the one below, the second above
          merges = grid.check_merge()
+         grid.drop_the_clumps()
          while merges:
             for i in range(len(merges)//2):
                grid.merge_tiles(merges[i*2][0], merges[i*2][1])
+            grid.drop_the_clumps()
             merges = grid.check_merge()
 
          # end the main game loop if the game is over
@@ -85,11 +89,11 @@ def start():
          grid.current_tetromino = current_tetromino
 
       # display the game grid with the current tetromino
-      grid.display()
-
+      grid.display(score)
+      
    # print a message on the console when the game is over
    print("Game over")
-
+   
 # A function for creating random shaped tetrominoes to enter the game grid
 def create_tetromino():
    # the type (shape) of the tetromino is determined randomly
@@ -119,7 +123,7 @@ def display_game_menu(grid_height, grid_width):
    # add the image to the drawing canvas
    stddraw.picture(image_to_display, img_center_x, img_center_y)
    # the dimensions for the start game button
-   button_w, button_h = grid_width - 8, 1
+   button_w, button_h = grid_width - 12, 1
    # the coordinates of the bottom left corner for the start game button
    button_blc_x, button_blc_y = img_center_x - button_w / 2, 4.5
    # add the start game button as a filled rectangle
