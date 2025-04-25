@@ -3,6 +3,8 @@ from lib.color import Color, COLOR_DICT, WHITE  # used for coloring the game gri
 from point import Point  # used for tile positions
 import numpy as np  # fundamental Python module for scientific computing
 import copy
+import os
+from lib.picture import Picture
 
 # A class for modeling the game grid
 class GameGrid:
@@ -33,7 +35,7 @@ class GameGrid:
         self.box_thickness = self.line_thickness
 
     # A method for displaying the game grid
-    def display(self, score):
+    def display(self, score, paused, muted):
         # clear the background to empty_cell_color
         stddraw.clear(self.empty_cell_color)
         # draw the game grid
@@ -47,6 +49,8 @@ class GameGrid:
 
         # Displays the info menu
         self.display_info(score)
+        # Displays the buttons
+        self.display_buttons(paused, muted)
         # show the resulting drawing with a pause duration = 250 ms
         stddraw.show(250)
 
@@ -57,10 +61,15 @@ class GameGrid:
         stddraw.setPenColor(info_menu_color)
         stddraw.filledRectangle(11.5, -0.5, 4, 20)
 
-        # Box around the text
+        # Box around the text 
         score_box_color = Color(88, 90, 107)
         stddraw.setPenColor(score_box_color)
         stddraw.filledRectangle(11.5, 13.5, 4, 2)
+
+        # Logo
+        current_dir = os.path.dirname(os.path.realpath(__file__))
+        img_file = current_dir + "/images/minilogo.png"
+        stddraw.picture(Picture(img_file), 13.5, 18.8)
 
         # Adds the score text
         stddraw.setFontFamily("Helvetica")
@@ -73,6 +82,22 @@ class GameGrid:
 
         # Resets the pencil
         stddraw.setPenRadius()
+    
+    # Displays buttons (duh...)
+    def display_buttons(self, paused, muted):
+        current_dir = os.path.dirname(os.path.realpath(__file__))
+        img_file = current_dir + "/images/mainmenu.png"
+        stddraw.picture(Picture(img_file), 13.5, 16.25)
+        if paused:
+            img_file = current_dir + "/images/continue.png"
+        else:
+            img_file = current_dir + "/images/pause.png"
+        stddraw.picture(Picture(img_file), 12.5, 17.5)
+        if muted:
+            img_file = current_dir + "/images/muted.png"
+        else:
+            img_file = current_dir + "/images/unmuted.png"
+        stddraw.picture(Picture(img_file), 14.5, 17.5)
 
     # A method for drawing the cells and the lines of the game grid
     def draw_grid(self):
