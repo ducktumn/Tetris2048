@@ -12,10 +12,18 @@ from game_grid import GameGrid  # the class for modeling the game grid
 from tetromino import Tetromino  # the class for modeling the tetrominoes
 import random  # used for creating tetrominoes with random types (shapes)
 import pygame
+import time
 
 # The main function where this program starts execution
 def start():
    pygame.mixer.init()
+
+   current_dir = os.path.dirname(os.path.realpath(__file__))
+   lock_tetromino = pygame.mixer.Sound(current_dir + "/sounds/block_place.wav")
+   clear_line = pygame.mixer.Sound(current_dir + "/sounds/clear.wav")
+   loss = pygame.mixer.Sound(current_dir + "/sounds/lose.wav")
+   win = pygame.mixer.Sound(current_dir + "/sounds/win.wav")
+   merge = pygame.mixer.Sound(current_dir + "/sounds/merge.wav")
    
    # Score
    score = 0
@@ -63,8 +71,14 @@ def start():
    while True:
       if len(full_rows) != 0:
          grid.remove_full_rows(full_rows)
+         if not muted:
+            clear_line.play
          full_rows = []
-      
+         time.sleep(1)
+         if tetromino_list[1] is not None:
+            grid.display(score, paused, muted, next_=Tetromino.get_min_bounded_tile_matrix(tetromino_list[1]))
+         else:
+            grid.display(score, paused, muted)
       if stddraw.mousePressed():
          x = stddraw.mouseX()
          y = stddraw.mouseY()
@@ -116,6 +130,8 @@ def start():
       
       # lock the active tetromino onto the grid when it cannot go down anymore
       if not success:
+         if not muted:
+            lock_tetromino.play()
          # get the tile matrix of the tetromino without empty rows and columns
          # and the position of the bottom left cell in this matrix
          tiles, pos = tetromino_list[0].get_min_bounded_tile_matrix(True)
@@ -126,12 +142,14 @@ def start():
          # each two tuples are to be merged, first being the one below, the second above
          merges = grid.check_merge()
          grid.drop_the_clumps()
-         while merges:
-            for i in range(len(merges)//2):
-               grid.merge_tiles(merges[i*2][0], merges[i*2][1])
-            grid.drop_the_clumps()
-            merges = grid.check_merge()
-
+         if merges:
+            while merges:
+               for i in range(len(merges)//2):
+                  grid.merge_tiles(merges[i*2][0], merges[i*2][1])
+               grid.drop_the_clumps()
+               merges = grid.check_merge()
+            if not muted:
+               merge.play()
          full_rows = grid.find_full_rows()
 
          # end the main game loop if the game is over
