@@ -37,11 +37,10 @@ def start():
    Tetromino.grid_width = grid_w
    # create the game grid
    grid = GameGrid(grid_h, grid_w)
-   # create the first tetromino to enter the game grid
+   # create the first tetromino to enter the game grid (and the second one so we can display it)
    # by using the create_tetromino function defined below
-   current_tetromino = create_tetromino()
-   grid.current_tetromino = current_tetromino
-
+   tetromino_list = [create_tetromino(), create_tetromino()]
+   grid.current_tetromino = tetromino_list[0]
    # display a simple menu before opening the game
    # by using the display_game_menu function defined below
    display_game_menu(grid_h, grid_w + 4)
@@ -49,16 +48,16 @@ def start():
 
    # Resets the whole game when called
    def reset(reset_buttons=True):
-      nonlocal score, grid, current_tetromino, full_rows, muted, paused
+      nonlocal score, grid, tetromino_list, full_rows, muted, paused
       score = 0
       grid = GameGrid(grid_h, grid_w)
-      current_tetromino = create_tetromino()
-      grid.current_tetromino = current_tetromino
+      tetromino_list = [create_tetromino(), create_tetromino()]
+      grid.current_tetromino = tetromino_list[0]
       full_rows = []
       if reset_buttons:
          paused = False
          muted = False
-      pygame.mixer.music.set_volume(1)
+         pygame.mixer.music.set_volume(1)
 
    # the main game loop
    while True:
@@ -93,16 +92,16 @@ def start():
          # if the left arrow key has been pressed
          if key_typed == "left" and not paused:
             # move the active tetromino left by one
-            current_tetromino.move(key_typed, grid)
+            tetromino_list[0].move(key_typed, grid)
          # if the right arrow key has been pressed
          elif key_typed == "right" and not paused:
             # move the active tetromino right by one
-            current_tetromino.move(key_typed, grid)
+            tetromino_list[0].move(key_typed, grid)
          # if the down arrow key has been pressed
          elif key_typed == "down" and not paused:
             # move the active tetromino down by one
             # (soft drop: causes the tetromino to fall down faster)
-            current_tetromino.move(key_typed, grid)
+            tetromino_list[0].move(key_typed, grid)
          if key_typed == "r":
             reset(False)
             continue
@@ -111,7 +110,7 @@ def start():
 
       # move the active tetromino down by one at each iteration (auto fall)
       if not paused:
-         success = current_tetromino.move("down", grid)
+         success = tetromino_list[0].move("down", grid)
       else:
          success = True
       
@@ -119,7 +118,7 @@ def start():
       if not success:
          # get the tile matrix of the tetromino without empty rows and columns
          # and the position of the bottom left cell in this matrix
-         tiles, pos = current_tetromino.get_min_bounded_tile_matrix(True)
+         tiles, pos = tetromino_list[0].get_min_bounded_tile_matrix(True)
          # update the game grid by locking the tiles of the landed tetromino
          game_over = grid.update_grid(tiles, pos)
 
@@ -140,12 +139,14 @@ def start():
             break
          # create the next tetromino to enter the game grid
          # by using the create_tetromino function defined below
-         current_tetromino = create_tetromino()
-         grid.current_tetromino = current_tetromino
+         tetromino_list = [tetromino_list[1], create_tetromino()]
+         grid.current_tetromino = tetromino_list[0]
 
       # display the game grid with the current tetromino
-      
-      grid.display(score, paused, muted)
+      if tetromino_list[1] is not None:
+         grid.display(score, paused, muted, next_=Tetromino.get_min_bounded_tile_matrix(tetromino_list[1]))
+      else:
+         grid.display(score, paused, muted)
       
    # print a message on the console when the game is over
    print("Game over")

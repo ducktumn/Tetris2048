@@ -239,7 +239,7 @@ def setPenColor(c=_DEFAULT_PEN_COLOR):
 
 def setFontFamily(f=_DEFAULT_FONT_FAMILY):
     """
-    Set the font family to f (e.g. 'Helvetica' or 'Courier').
+    Set the font family to f (e.g. 'Sans Serif' or 'Courier').
     """
     global _fontFamily
     _fontFamily = f

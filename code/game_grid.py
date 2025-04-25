@@ -35,7 +35,7 @@ class GameGrid:
         self.box_thickness = self.line_thickness
 
     # A method for displaying the game grid
-    def display(self, score, paused, muted, delay=250):
+    def display(self, score, paused, muted, delay=250, next_=None):
         # clear the background to empty_cell_color
         stddraw.clear(self.empty_cell_color)
         # draw the game grid
@@ -51,9 +51,34 @@ class GameGrid:
         self.display_info(score)
         # Displays the buttons
         self.display_buttons(paused, muted)
+        
+        if next_ is not None:
+            self.display_next_tetromino(next_)
+
         # show the resulting drawing with a pause duration = 250 ms
         stddraw.show(delay)
 
+    # Displays the next tetromino and the text for it (no way)
+    def display_next_tetromino(self, next_):
+        row = 5
+        col = 12 + (4 - len(next_[0])) / 2
+        starting_col = col
+        for i in next_:
+            col = starting_col
+            for j in i:
+                if j is not None:
+                    j.draw(Point(col, row), length=1)
+                col = col + 1
+            row = row - 1
+        
+        stddraw.setPenColor(Color(88, 90, 107))
+        stddraw.filledRectangle(11.5, 6, 4, 1)
+        
+        stddraw.setFontFamily("Sans Serif")
+        stddraw.setFontSize(30)
+        stddraw.setPenColor(Color(208, 210, 227))
+        stddraw.text(13.5, 6.5, "Next Tetromino")
+        
     # Gets displayed while playing
     def display_info(self, score):
         # Adds the info box
@@ -66,10 +91,14 @@ class GameGrid:
         stddraw.setPenColor(score_box_color)
         stddraw.filledRectangle(11.5, 13.5, 4, 2)
 
-        # Logo
+        # Logo of the game
         current_dir = os.path.dirname(os.path.realpath(__file__))
         img_file = current_dir + "/images/minilogo.png"
         stddraw.picture(Picture(img_file), 13.5, 18.8)
+
+        # Logo of MEF
+        img_file = current_dir + "/images/meflogo.png"
+        stddraw.picture(Picture(img_file), 13.5, 1)
 
         # Adds the score text
         stddraw.setFontFamily("Helvetica")
