@@ -42,6 +42,10 @@ def start():
 
    # the main game loop
    while True:
+      if len(full_rows) != 0:
+         grid.remove_full_rows(full_rows)
+         full_rows = []
+      
       # check for any user interaction via the keyboard
       if stddraw.hasNextKeyTyped():  # check if the user has pressed a key
          key_typed = stddraw.nextKeyTyped()  # the most recently pressed key
@@ -63,10 +67,6 @@ def start():
 
       # move the active tetromino down by one at each iteration (auto fall)
       success = current_tetromino.move("down", grid)
-
-      if len(full_rows) != 0:
-         grid.remove_full_rows(full_rows)
-         full_rows = []
 
       # lock the active tetromino onto the grid when it cannot go down anymore
       if not success:

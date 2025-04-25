@@ -240,11 +240,8 @@ class GameGrid:
                 rows.append(i)
                 for j in range(0, n_cols):
                     tile = self.tile_matrix[i][j]
-                    if tile is None:
-                        print("s")
-                    else:
-                        tile.background_color = Color(88, 30, 107)
-                        tile.foreground_color = Color(88, 90, 5)
+                    tile.background_color = Color(88, 30, 107)
+                    tile.foreground_color = Color(88, 90, 5)
         return rows
 
     # Moves tiles above the rows that should be deleted one step down
