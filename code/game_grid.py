@@ -1,5 +1,5 @@
 import lib.stddraw as stddraw  # used for displaying the game grid
-from lib.color import Color, COLOR_DICT  # used for coloring the game grid
+from lib.color import Color, COLOR_DICT, WHITE  # used for coloring the game grid
 from point import Point  # used for tile positions
 import numpy as np  # fundamental Python module for scientific computing
 import copy
@@ -240,8 +240,8 @@ class GameGrid:
                 rows.append(i)
                 for j in range(0, n_cols):
                     tile = self.tile_matrix[i][j]
-                    tile.background_color = Color(88, 30, 107)
-                    tile.foreground_color = Color(88, 90, 5)
+                    tile.background_color = Color(79, 255, 0)
+                    tile.foreground_color = WHITE
         return rows
 
     # Moves tiles above the rows that should be deleted one step down
