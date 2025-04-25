@@ -11,9 +11,12 @@ import os  # the os module is used for file and directory operations
 from game_grid import GameGrid  # the class for modeling the game grid
 from tetromino import Tetromino  # the class for modeling the tetrominoes
 import random  # used for creating tetrominoes with random types (shapes)
+import pygame
 
 # The main function where this program starts execution
 def start():
+   pygame.mixer.init()
+   
    # Score
    score = 0
    #Button states
@@ -45,13 +48,17 @@ def start():
    full_rows = []
 
    # Resets the whole game when called
-   def reset():
-      nonlocal score, grid, current_tetromino, full_rows
+   def reset(reset_buttons=True):
+      nonlocal score, grid, current_tetromino, full_rows, muted, paused
       score = 0
       grid = GameGrid(grid_h, grid_w)
       current_tetromino = create_tetromino()
       grid.current_tetromino = current_tetromino
       full_rows = []
+      if reset_buttons:
+         paused = False
+         muted = False
+      pygame.mixer.music.set_volume(1)
 
    # the main game loop
    while True:
@@ -59,28 +66,55 @@ def start():
          grid.remove_full_rows(full_rows)
          full_rows = []
       
+      if stddraw.mousePressed():
+         x = stddraw.mouseX()
+         y = stddraw.mouseY()
+         if (x < 14 and x > 13) and (y > 15.75 and y < 16.75):
+            reset()
+            display_game_menu(grid_h, grid_w + 4)
+            continue
+         elif (x < 13 and x > 12) and (y > 17 and y < 18):
+            paused = not paused
+            if paused:
+               pygame.mixer.music.stop()
+            else:
+               pygame.mixer.music.play()
+            continue
+         elif (x < 15 and x > 14) and (y > 17 and y < 18):
+            muted = not muted
+            if muted:
+               pygame.mixer.music.set_volume(0)
+            else:
+               pygame.mixer.music.set_volume(1)
+
       # check for any user interaction via the keyboard
       if stddraw.hasNextKeyTyped():  # check if the user has pressed a key
          key_typed = stddraw.nextKeyTyped()  # the most recently pressed key
          # if the left arrow key has been pressed
-         if key_typed == "left":
+         if key_typed == "left" and not paused:
             # move the active tetromino left by one
             current_tetromino.move(key_typed, grid)
          # if the right arrow key has been pressed
-         elif key_typed == "right":
+         elif key_typed == "right" and not paused:
             # move the active tetromino right by one
             current_tetromino.move(key_typed, grid)
          # if the down arrow key has been pressed
-         elif key_typed == "down":
+         elif key_typed == "down" and not paused:
             # move the active tetromino down by one
             # (soft drop: causes the tetromino to fall down faster)
             current_tetromino.move(key_typed, grid)
+         if key_typed == "r":
+            reset(False)
+            continue
          # clear the queue of the pressed keys for a smoother interaction
          stddraw.clearKeysTyped()
 
       # move the active tetromino down by one at each iteration (auto fall)
-      success = current_tetromino.move("down", grid)
-
+      if not paused:
+         success = current_tetromino.move("down", grid)
+      else:
+         success = True
+      
       # lock the active tetromino onto the grid when it cannot go down anymore
       if not success:
          # get the tile matrix of the tetromino without empty rows and columns
@@ -128,14 +162,19 @@ def create_tetromino():
 
 # A function for displaying a simple menu before starting the game
 def display_game_menu(grid_height, grid_width):
+   # get the directory in which this python code file is placed
+   current_dir = os.path.dirname(os.path.realpath(__file__))
+   
+   # Menu music
+   pygame.mixer.music.load(current_dir + "/sounds/tetris.ogg")
+   pygame.mixer.music.play(loops=-1)
+   
    # the colors used for the menu
    background_color = Color(237, 224, 200)
    button_color = Color(119, 110, 101)
    text_color = Color(237, 224, 200)
    # clear the background drawing canvas to background_color
    stddraw.clear(background_color)
-   # get the directory in which this python code file is placed
-   current_dir = os.path.dirname(os.path.realpath(__file__))
    # compute the path of the image file
    img_file = current_dir + "/images/menu_image.png"
    # the coordinates to display the image centered horizontally
@@ -169,6 +208,9 @@ def display_game_menu(grid_height, grid_width):
          # check if these coordinates are inside the button
          if mouse_x >= button_blc_x and mouse_x <= button_blc_x + button_w:
             if mouse_y >= button_blc_y and mouse_y <= button_blc_y + button_h:
+               pygame.mixer.music.stop()
+               pygame.mixer.music.load(current_dir + "/sounds/chronologica.ogg")
+               pygame.mixer.music.play(loops=-1)
                break  # break the loop to end the method and start the game
 
 

@@ -35,7 +35,7 @@ class GameGrid:
         self.box_thickness = self.line_thickness
 
     # A method for displaying the game grid
-    def display(self, score, paused, muted):
+    def display(self, score, paused, muted, delay=250):
         # clear the background to empty_cell_color
         stddraw.clear(self.empty_cell_color)
         # draw the game grid
@@ -52,7 +52,7 @@ class GameGrid:
         # Displays the buttons
         self.display_buttons(paused, muted)
         # show the resulting drawing with a pause duration = 250 ms
-        stddraw.show(250)
+        stddraw.show(delay)
 
     # Gets displayed while playing
     def display_info(self, score):
@@ -79,6 +79,8 @@ class GameGrid:
         stddraw.text(13.5, 15, text_to_display)
         text_to_display = str(score)
         stddraw.text(13.5, 14, text_to_display)
+        stddraw.setFontSize(14)
+        stddraw.text(13.5, 13.2, "Press \"r\" to reset the game!")
 
         # Resets the pencil
         stddraw.setPenRadius()
