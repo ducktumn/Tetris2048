@@ -60,7 +60,7 @@ class GameGrid:
 
     # Displays the next tetromino and the text for it (no way)
     def display_next_tetromino(self, next_):
-        row = 5
+        row = 7
         col = 12 + (4 - len(next_[0])) / 2
         starting_col = col
         for i in next_:
@@ -72,12 +72,12 @@ class GameGrid:
             row = row - 1
         
         stddraw.setPenColor(Color(88, 90, 107))
-        stddraw.filledRectangle(11.5, 6, 4, 1)
+        stddraw.filledRectangle(11.5, 8, 4, 1)
         
         stddraw.setFontFamily("Sans Serif")
         stddraw.setFontSize(30)
         stddraw.setPenColor(Color(208, 210, 227))
-        stddraw.text(13.5, 6.5, "Next Tetromino")
+        stddraw.text(13.5, 8.5, "Next Tetromino")
         
     # Gets displayed while playing
     def display_info(self, score):
