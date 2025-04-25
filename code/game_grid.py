@@ -229,7 +229,6 @@ class GameGrid:
     def find_full_rows(self):
         n_rows, n_cols = self.grid_height, self.grid_width
         rows = []
-
         for i in range(n_rows):
             is_full = True
             for j in range(n_cols):

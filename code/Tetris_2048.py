@@ -40,6 +40,15 @@ def start():
    display_game_menu(grid_h, grid_w + 4)
    full_rows = []
 
+   # Resets the whole game when called
+   def reset():
+      nonlocal score, grid, current_tetromino, full_rows
+      score = 0
+      grid = GameGrid(grid_h, grid_w)
+      current_tetromino = create_tetromino()
+      grid.current_tetromino = current_tetromino
+      full_rows = []
+
    # the main game loop
    while True:
       if len(full_rows) != 0:
