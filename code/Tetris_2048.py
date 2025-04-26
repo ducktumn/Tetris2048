@@ -85,7 +85,7 @@ def start():
          if not muted:
             clear_line.play()
          full_rows = []
-         time.sleep(1)
+         time.sleep(0.5)
          if tetromino_list[1] is not None:
             grid.display(score, paused, muted, next_=Tetromino.get_min_bounded_tile_matrix(tetromino_list[1]), delay=delay)
          else:
