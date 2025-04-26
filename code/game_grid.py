@@ -110,6 +110,7 @@ class GameGrid:
         stddraw.text(13.5, 14, text_to_display)
         stddraw.setFontSize(14)
         stddraw.text(13.5, 13.2, "Press \"r\" to reset the game!")
+        stddraw.text(13.5, 12.7, "Press \"h\" to hard drop!")
 
         # Resets the pencil
         stddraw.setPenRadius()
@@ -333,5 +334,4 @@ class GameGrid:
             for j in range(cols):
                 if self.tile_matrix[i][j] is not None:
                     sum += self.tile_matrix[i][j].number
-
         return sum

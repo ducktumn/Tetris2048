@@ -72,13 +72,8 @@ def start():
       if len(full_rows) != 0:
          score += grid.sum_scores_in_row(full_rows)
          grid.remove_full_rows(full_rows)
-         if score >= 2048:
-            win.play()
-            grid.display_win(score)
-            reset()
-            display_game_menu(grid_h, grid_w + 4)
          if not muted:
-            clear_line.play
+            clear_line.play()
          full_rows = []
          time.sleep(1)
          if tetromino_list[1] is not None:
@@ -159,18 +154,19 @@ def start():
          if merges:
             while merges:
                for i in range(len(merges)//2):
-                  score += grid.merge_tiles(merges[i*2][0], merges[i*2][1])
+                  new_tile_score = grid.merge_tiles(merges[i*2][0], merges[i*2][1])
+                  score += new_tile_score
+                  if new_tile_score == 2048:
+                     grid.display(score, paused, muted)
+                     win.play()
+                     grid.display_win(score)
+                     reset()
+                     display_game_menu(grid_h, grid_w + 4)
                grid.drop_the_clumps()
                merges = grid.check_merge()
             if not muted:
                merge.play()
-            if score >= 2048:
-               grid.display(score, paused, muted)
-               win.play()
-               grid.display_win(score)
-               reset()
-               display_game_menu(grid_h, grid_w + 4)
-
+            
          full_rows = grid.find_full_rows()
 
          # end the main game loop if the game is over
