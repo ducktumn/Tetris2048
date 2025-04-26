@@ -31,6 +31,8 @@ def start():
    paused = False
    muted = False
 
+   difficulty = 1
+
    # set the dimensions of the game grid
    grid_h, grid_w = 20, 12
    # set the size of the drawing canvas (the displayed window)
@@ -51,7 +53,14 @@ def start():
    grid.current_tetromino = tetromino_list[0]
    # display a simple menu before opening the game
    # by using the display_game_menu function defined below
-   display_game_menu(grid_h, grid_w + 4)
+   muted, difficulty = display_game_menu(grid_h, grid_w + 4)
+   
+   delay = 50
+   if difficulty == 2:
+      delay = 150
+   elif difficulty == 1:
+      delay = 500
+   
    full_rows = []
 
    # Resets the whole game when called
@@ -77,15 +86,21 @@ def start():
          full_rows = []
          time.sleep(1)
          if tetromino_list[1] is not None:
-            grid.display(score, paused, muted, next_=Tetromino.get_min_bounded_tile_matrix(tetromino_list[1]))
+            grid.display(score, paused, muted, next_=Tetromino.get_min_bounded_tile_matrix(tetromino_list[1]), delay=delay)
          else:
-            grid.display(score, paused, muted)
+            grid.display(score, paused, muted, delay=delay)
       if stddraw.mousePressed():
          x = stddraw.mouseX()
          y = stddraw.mouseY()
          if (x < 14 and x > 13) and (y > 15.75 and y < 16.75):
             reset()
-            display_game_menu(grid_h, grid_w + 4)
+            difficulty = 1
+            muted, difficulty = display_game_menu(grid_h, grid_w + 4)
+            delay = 50
+            if difficulty == 2:
+               delay = 150
+            elif difficulty == 1:
+               delay = 500
             continue
          elif (x < 13 and x > 12) and (y > 17 and y < 18):
             paused = not paused
@@ -157,7 +172,7 @@ def start():
                   new_tile_score = grid.merge_tiles(merges[i*2][0], merges[i*2][1])
                   score += new_tile_score
                   if new_tile_score == 2048:
-                     grid.display(score, paused, muted)
+                     grid.display(score, paused, muted, delay=delay)
                      win.play()
                      grid.display_win(score)
                      reset()
@@ -179,9 +194,9 @@ def start():
 
       # display the game grid with the current tetromino
       if tetromino_list[1] is not None:
-         grid.display(score, paused, muted, next_=Tetromino.get_min_bounded_tile_matrix(tetromino_list[1]))
+         grid.display(score, paused, muted, next_=Tetromino.get_min_bounded_tile_matrix(tetromino_list[1]), delay=delay)
       else:
-         grid.display(score, paused, muted)
+         grid.display(score, paused, muted, delay=delay)
       
    # print a message on the console when the game is over
    print("Game over")
@@ -232,6 +247,20 @@ def display_game_menu(grid_height, grid_width):
    stddraw.setPenColor(text_color)
    text_to_display = "Start"
    stddraw.text(img_center_x, 5, text_to_display)
+
+   sound_location = (button_blc_x + button_w / 2 - 1, button_blc_y + button_h + 1.25)
+   muted_image = current_dir + "/images/menu_mute.png"
+   unmuted_image = current_dir + "/images/menu_unmute.png"
+   stddraw.picture(Picture(unmuted_image),sound_location[0], sound_location[1])
+   muted = False
+
+   diff_location = (sound_location[0]+2, sound_location[1])
+   difficulty = 1
+   image_1 = current_dir + "/images/1.png"
+   image_2 = current_dir + "/images/2.png"
+   image_3 = current_dir + "/images/3.png"
+   stddraw.picture(Picture(image_1), diff_location[0], diff_location[1])
+
    # the user interaction loop for the simple menu
    while True:
       # display the menu and wait for a short time (50 ms)
@@ -247,8 +276,32 @@ def display_game_menu(grid_height, grid_width):
                pygame.mixer.music.stop()
                pygame.mixer.music.load(current_dir + "/sounds/chronologica.ogg")
                pygame.mixer.music.play(loops=-1)
+               return (muted, difficulty)
                break  # break the loop to end the method and start the game
-
+         if mouse_x < (sound_location[0] + 0.5) and mouse_x > (sound_location[0] - 0.5):
+            if mouse_y < (sound_location[1] + 0.5) and mouse_y > (sound_location[1] - 0.5):
+               stddraw.setPenColor(background_color)
+               stddraw.filledRectangle(sound_location[0]-0.5, sound_location[1]-0.5, 1, 1)
+               if muted:
+                  stddraw.picture(Picture(unmuted_image),sound_location[0], sound_location[1])
+                  pygame.mixer.music.set_volume(1)
+               else:
+                  stddraw.picture(Picture(muted_image),sound_location[0], sound_location[1])
+                  pygame.mixer.music.set_volume(0)
+               muted = not muted
+         if mouse_x < (diff_location[0] + 0.5) and mouse_x > (diff_location[0] - 0.5):
+            if mouse_y < (diff_location[1] + 0.5) and mouse_y > (diff_location[1] - 0.5):
+               stddraw.setPenColor(background_color)
+               stddraw.filledRectangle(diff_location[0]-0.5, diff_location[1]-0.5, 1, 1)
+               if difficulty == 3:
+                  difficulty = 1
+                  stddraw.picture(Picture(image_1),diff_location[0], diff_location[1])
+               elif difficulty == 2:
+                  difficulty = 3
+                  stddraw.picture(Picture(image_3),diff_location[0], diff_location[1])
+               else:
+                  difficulty = 2
+                  stddraw.picture(Picture(image_2),diff_location[0], diff_location[1])
 
 # start() function is specified as the entry point (main function) from which
 # the program starts execution

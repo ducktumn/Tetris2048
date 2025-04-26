@@ -133,7 +133,6 @@ class GameGrid:
 
     # Displays a win
     def display_win(self, score):
-
         # Overlay a semi-transparent dark layer
         stddraw.setPenColor(Color(0, 0, 0))  # Semi-transparent black
         stddraw.filledRectangle(-0.5, -0.5, 12, self.grid_height + 10)
@@ -146,7 +145,6 @@ class GameGrid:
         stddraw.setFontSize(40)
         stddraw.text(self.grid_width / 2, self.grid_height / 2 - 2, f"Final Score: {score}")
         stddraw.show(3000)
-
 
     # A method for drawing the cells and the lines of the game grid
     def draw_grid(self):
