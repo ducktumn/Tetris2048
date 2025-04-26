@@ -11,6 +11,7 @@ class Tetromino:
 
    # A constructor for creating a tetromino with a given shape (type)
    def __init__(self, shape):
+      self.rotation_state = 0
       self.type = shape  # set the type of this tetromino
       # determine the occupied (non-empty) cells in the tile matrix based on
       # the shape of this tetromino (see the documentation given with this code)
@@ -206,3 +207,64 @@ class Tetromino:
                   break  # end the inner for loop
       # if this method does not end by returning False before this line
       return True  # this tetromino can be moved in the given direction
+
+   # A method for rotating the tetromino to the right
+   def rotate(self, game_grid):
+      # Create a new empty matrix of the same size
+      n = len(self.tile_matrix)
+      new_matrix = np.full((n, n), None)
+
+      # Collect existing tiles
+      if self.rotation_state == 0 and self.type == 'I':
+         tiles = [cell for row in self.tile_matrix[::-1] for cell in row[::-1] if cell is not None]
+      else:
+         tiles = [cell for row in self.tile_matrix for cell in row if cell is not None]
+
+      positions = []
+      # Define rotation rules for each tetromino type
+      if self.type == 'I':
+         # I has 2 rotation states (vertical/horizontal)
+         if self.rotation_state == 0:
+            positions = [(i, 3) for i in range(4)]
+         else:
+            positions = [(1, i) for i in range(4)]
+         self.rotation_state = (self.rotation_state + 1) % 2
+      elif self.type in ['O', 'T', 'L', 'J', 'S', 'Z']:
+         # Standard rotation for 3x3 matrices (transpose + reverse rows)
+         for i in range(n):
+            for j in range(n):
+               new_matrix[j][n - 1 - i] = self.tile_matrix[i][j]
+         self.tile_matrix = new_matrix
+         self.rotation_state = (self.rotation_state + 1) % 4
+         return True
+
+      # Place tiles in new positions
+      for (col, row), tile in zip(positions, tiles):
+         new_matrix[row][col] = tile
+      if not self.can_be_rotated(new_matrix, game_grid):
+         return False
+
+      self.tile_matrix = new_matrix
+      return True
+
+   # A method for checking if it can be rotated
+   def can_be_rotated(self, matrix, game_grid):
+      occupied = False
+      n = len(matrix)
+      for row in range(n):
+         for col in range(n):
+            blc_position = cp.copy(self.bottom_left_cell)
+            position = Point()
+            position.x = blc_position.x + col
+            position.y = blc_position.y + (n - 1) - row
+            inside = game_grid.is_inside(position.y, position.x)
+            if inside:
+               occupied = game_grid.tile_matrix[position.y][position.x] is not None
+
+            if not inside:
+               return False
+
+            if occupied:
+               return False
+
+      return True

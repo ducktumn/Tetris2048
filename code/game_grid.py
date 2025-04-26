@@ -51,7 +51,7 @@ class GameGrid:
         self.display_info(score)
         # Displays the buttons
         self.display_buttons(paused, muted)
-        
+
         if next_ is not None:
             self.display_next_tetromino(next_)
 
@@ -113,7 +113,7 @@ class GameGrid:
 
         # Resets the pencil
         stddraw.setPenRadius()
-    
+
     # Displays buttons (duh...)
     def display_buttons(self, paused, muted):
         current_dir = os.path.dirname(os.path.realpath(__file__))
@@ -129,6 +129,23 @@ class GameGrid:
         else:
             img_file = current_dir + "/images/unmuted.png"
         stddraw.picture(Picture(img_file), 14.5, 17.5)
+
+    # Displays a win
+    def display_win(self, score):
+
+        # Overlay a semi-transparent dark layer
+        stddraw.setPenColor(Color(0, 0, 0))  # Semi-transparent black
+        stddraw.filledRectangle(-0.5, -0.5, 12, self.grid_height + 10)
+
+        # Display WIN text
+        stddraw.setFontFamily("Impact")
+        stddraw.setFontSize(100)
+        stddraw.setPenColor(Color(255, 215, 0))  # Gold color
+        stddraw.text(self.grid_width / 2, self.grid_height / 2 + 2, "WIN!")
+        stddraw.setFontSize(40)
+        stddraw.text(self.grid_width / 2, self.grid_height / 2 - 2, f"Final Score: {score}")
+        stddraw.show(3000)
+
 
     # A method for drawing the cells and the lines of the game grid
     def draw_grid(self):
@@ -235,6 +252,7 @@ class GameGrid:
             cell.foreground_color = COLOR_DICT[cell.number][1]
             self.tile_matrix[row + 1][col] = None
             self.fall_after_merge(row, col)
+        return cell.number
     # Moves the column above the tiles after a merge
     def fall_after_merge(self, row, col):
         current_row = row + 2
@@ -301,6 +319,19 @@ class GameGrid:
 
     # Moves tiles above the rows that should be deleted one step down
     def remove_full_rows(self, rows):
+        n_rows, n_cols = self.grid_height, self.grid_width
+
         for i in rows:
-            for j in range(self.grid_width):
-                self.tile_matrix[i][j] = self.tile_matrix[i + 1][j]
+            for k in range(i, n_rows - 1):
+                for j in range(n_cols):
+                    self.tile_matrix[k][j] = self.tile_matrix[k + 1][j]
+
+    def sum_scores_in_row(self, rows):
+        cols = self.grid_width
+        sum = 0
+        for i in rows:
+            for j in range(cols):
+                if self.tile_matrix[i][j] is not None:
+                    sum += self.tile_matrix[i][j].number
+
+        return sum

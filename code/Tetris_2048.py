@@ -70,7 +70,13 @@ def start():
    # the main game loop
    while True:
       if len(full_rows) != 0:
+         score += grid.sum_scores_in_row(full_rows)
          grid.remove_full_rows(full_rows)
+         if score >= 2048:
+            win.play()
+            grid.display_win(score)
+            reset()
+            display_game_menu(grid_h, grid_w + 4)
          if not muted:
             clear_line.play
          full_rows = []
@@ -100,6 +106,7 @@ def start():
             else:
                pygame.mixer.music.set_volume(1)
 
+      is_hard_dropped = False
       # check for any user interaction via the keyboard
       if stddraw.hasNextKeyTyped():  # check if the user has pressed a key
          key_typed = stddraw.nextKeyTyped()  # the most recently pressed key
@@ -116,6 +123,13 @@ def start():
             # move the active tetromino down by one
             # (soft drop: causes the tetromino to fall down faster)
             tetromino_list[0].move(key_typed, grid)
+         elif key_typed == 'up' and not paused:
+            rotated = tetromino_list[0].rotate(grid)
+         if key_typed == "h" and not paused:
+            is_hard_dropped = True
+            moved_down = True
+            while moved_down:
+               moved_down = tetromino_list[0].move("down", grid)
          if key_typed == "r":
             reset(False)
             continue
@@ -123,13 +137,13 @@ def start():
          stddraw.clearKeysTyped()
 
       # move the active tetromino down by one at each iteration (auto fall)
-      if not paused:
+      if not paused and not is_hard_dropped:
          success = tetromino_list[0].move("down", grid)
       else:
          success = True
       
       # lock the active tetromino onto the grid when it cannot go down anymore
-      if not success:
+      if not success or is_hard_dropped:
          if not muted:
             lock_tetromino.play()
          # get the tile matrix of the tetromino without empty rows and columns
@@ -145,11 +159,18 @@ def start():
          if merges:
             while merges:
                for i in range(len(merges)//2):
-                  grid.merge_tiles(merges[i*2][0], merges[i*2][1])
+                  score += grid.merge_tiles(merges[i*2][0], merges[i*2][1])
                grid.drop_the_clumps()
                merges = grid.check_merge()
             if not muted:
                merge.play()
+            if score >= 2048:
+               grid.display(score, paused, muted)
+               win.play()
+               grid.display_win(score)
+               reset()
+               display_game_menu(grid_h, grid_w + 4)
+
          full_rows = grid.find_full_rows()
 
          # end the main game loop if the game is over
