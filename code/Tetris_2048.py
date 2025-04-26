@@ -78,6 +78,7 @@ def start():
 
    # the main game loop
    while True:
+      restart_game = False
       if len(full_rows) != 0:
          score += grid.sum_scores_in_row(full_rows)
          grid.remove_full_rows(full_rows)
@@ -159,34 +160,57 @@ def start():
          # get the tile matrix of the tetromino without empty rows and columns
          # and the position of the bottom left cell in this matrix
          tiles, pos = tetromino_list[0].get_min_bounded_tile_matrix(True)
-         # update the game grid by locking the tiles of the landed tetromino
-         game_over = grid.update_grid(tiles, pos)
-
+         # update the game grid by locking the tiles of the landed tetromino 
+         if grid.update_grid(tiles, pos):
+            grid.display(score, paused, muted, delay=delay)
+            if not muted:
+               loss.play()
+            grid.display_end_screen(score, is_loss=True)
+            reset()
+            difficulty = 1
+            muted, difficulty = display_game_menu(grid_h, grid_w + 4)
+            delay = 50
+            if difficulty == 2:
+               delay = 150
+            elif difficulty == 1:
+               delay = 500
+            restart_game = True
+            
          # get a list of tuples which contain coordinates of tiles that need to be merged
          # each two tuples are to be merged, first being the one below, the second above
-         merges = grid.check_merge()
-         grid.drop_the_clumps()
-         if merges:
-            while merges:
+         if not restart_game:
+            merges = grid.check_merge()
+            grid.drop_the_clumps()
+         if merges and not restart_game:
+            while merges and not restart_game:
                for i in range(len(merges)//2):
                   new_tile_score = grid.merge_tiles(merges[i*2][0], merges[i*2][1])
                   score += new_tile_score
                   if new_tile_score == 2048:
                      grid.display(score, paused, muted, delay=delay)
-                     win.play()
-                     grid.display_win(score)
+                     if not muted:
+                        win.play()
+                     grid.display_end_screen(score)
                      reset()
-                     display_game_menu(grid_h, grid_w + 4)
+                     difficulty = 1
+                     muted, difficulty = display_game_menu(grid_h, grid_w + 4)
+                     delay = 50
+                     if difficulty == 2:
+                        delay = 150
+                     elif difficulty == 1:
+                        delay = 500
+                     restart_game = True
+                     break
                grid.drop_the_clumps()
                merges = grid.check_merge()
             if not muted:
                merge.play()
-            
+
+         if restart_game:
+            continue
+
          full_rows = grid.find_full_rows()
 
-         # end the main game loop if the game is over
-         if game_over:
-            break
          # create the next tetromino to enter the game grid
          # by using the create_tetromino function defined below
          tetromino_list = [tetromino_list[1], create_tetromino()]

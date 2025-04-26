@@ -131,20 +131,39 @@ class GameGrid:
             img_file = current_dir + "/images/unmuted.png"
         stddraw.picture(Picture(img_file), 14.5, 17.5)
 
-    # Displays a win
-    def display_win(self, score):
-        # Overlay a semi-transparent dark layer
-        stddraw.setPenColor(Color(0, 0, 0))  # Semi-transparent black
-        stddraw.filledRectangle(-0.5, -0.5, 12, self.grid_height + 10)
+    # Displays Game Over Screen
+    def display_end_screen(self, score, is_loss=False):
+        current_dir = os.path.dirname(os.path.realpath(__file__))
+        if is_loss:
+            img_file = current_dir + "/images/lost.png"
+        else:
+            img_file = current_dir + "/images/win.png"
+        stddraw.picture(Picture(img_file), 7.5, 9.5)
 
-        # Display WIN text
+        # Display Score
         stddraw.setFontFamily("Impact")
-        stddraw.setFontSize(100)
-        stddraw.setPenColor(Color(255, 215, 0))  # Gold color
-        stddraw.text(self.grid_width / 2, self.grid_height / 2 + 2, "WIN!")
+        if is_loss:
+            stddraw.setPenColor(Color(230, 16, 34))  # Red color
+        else:
+            stddraw.setPenColor(Color(52, 224, 13))  # Green color
         stddraw.setFontSize(40)
-        stddraw.text(self.grid_width / 2, self.grid_height / 2 - 2, f"Final Score: {score}")
-        stddraw.show(3000)
+        stddraw.text(self.grid_width / 2 + 1.5, self.grid_height / 2 - 1, f"Final Score: {score}")
+
+        # Home Button
+        button_location = (self.grid_width / 2 + 1, self.grid_height / 2 - 3)
+        img_file = current_dir + "/images/mainmenu.png"
+        stddraw.filledRectangle(button_location[0], button_location[1], 1, 1)
+        stddraw.picture(Picture(img_file),button_location[0] + 0.5 , button_location[1] + 0.5)
+        
+        while True:
+            stddraw.show(50)
+            if stddraw.mousePressed():
+                mouse_x, mouse_y = stddraw.mouseX(), stddraw.mouseY()
+                if mouse_x > button_location[0] and mouse_x < (button_location[0] + 1):
+                    if mouse_y > button_location[1] and mouse_y < (button_location[1] + 1):
+                        break
+
+                
 
     # A method for drawing the cells and the lines of the game grid
     def draw_grid(self):
@@ -214,11 +233,13 @@ class GameGrid:
                     pos = Point()
                     pos.x = blc_position.x + col
                     pos.y = blc_position.y + (n_rows - 1) - row
+                    # Check if the tile is inside the grid
                     if self.is_inside(pos.y, pos.x):
                         self.tile_matrix[pos.y][pos.x] = tiles_to_lock[row][col]
-                    # the game is over if any placed tile is above the game grid
-                    else:
+                    # If the tile is above the grid, end the game
+                    elif pos.y >= self.grid_height:
                         self.game_over = True
+                        return True  # Immediately return to stop further processing
         # return the value of the game_over flag
         return self.game_over
 
@@ -249,18 +270,21 @@ class GameGrid:
             cell.number = cell.number * 2
             cell.background_color = COLOR_DICT[cell.number][0]
             cell.foreground_color = COLOR_DICT[cell.number][1]
-            self.tile_matrix[row + 1][col] = None
+            if row + 1 < self.grid_height:  # Ensure row + 1 is within bounds
+                self.tile_matrix[row + 1][col] = None
             self.fall_after_merge(row, col)
         return cell.number
     # Moves the column above the tiles after a merge
     def fall_after_merge(self, row, col):
         current_row = row + 2
-        current_tile = copy.deepcopy(self.tile_matrix[current_row][col])
-        while current_tile is not None:
+        while current_row < self.grid_height:
+            current_tile = self.tile_matrix[current_row][col]
+            if current_tile is None:
+                break
+            # Move the tile down
             self.tile_matrix[current_row][col] = None
             self.tile_matrix[current_row - 1][col] = current_tile
-            current_row = current_row + 1
-            current_tile = copy.deepcopy(self.tile_matrix[current_row][col])
+            current_row += 1
 
     # Returns a list of connected tile locations starting from a location
     def get_connected_tiles(self, starting_location, tile_set, check_set):
