@@ -18,6 +18,7 @@ import time
 def start():
    pygame.mixer.init()
 
+   # Sounds for different states of the game
    current_dir = os.path.dirname(os.path.realpath(__file__))
    lock_tetromino = pygame.mixer.Sound(current_dir + "/sounds/block_place.wav")
    clear_line = pygame.mixer.Sound(current_dir + "/sounds/clear.wav")
@@ -27,7 +28,7 @@ def start():
    
    # Score
    score = 0
-   #Button states
+   # Button states
    paused = False
    muted = False
 
@@ -53,6 +54,7 @@ def start():
    grid.current_tetromino = tetromino_list[0]
    # display a simple menu before opening the game
    # by using the display_game_menu function defined below
+   # game is muted or unmuted and difficulty level is chosen at the start menu
    muted, difficulty = display_game_menu(grid_h, grid_w + 4)
    
    delay = 50
@@ -79,6 +81,7 @@ def start():
    # the main game loop
    while True:
       restart_game = False
+      # if there is a full row that needs to be removed and its scores to be added
       if len(full_rows) != 0:
          score += grid.sum_scores_in_row(full_rows)
          grid.remove_full_rows(full_rows)
@@ -93,6 +96,7 @@ def start():
       if stddraw.mousePressed():
          x = stddraw.mouseX()
          y = stddraw.mouseY()
+         # if a home button has been pressed
          if (x < 14 and x > 13) and (y > 15.75 and y < 16.75):
             reset()
             difficulty = 1
@@ -103,6 +107,7 @@ def start():
             elif difficulty == 1:
                delay = 500
             continue
+         # if a pause button has been pressed
          elif (x < 13 and x > 12) and (y > 17 and y < 18):
             paused = not paused
             if paused:
@@ -110,6 +115,7 @@ def start():
             else:
                pygame.mixer.music.play()
             continue
+         # if a mute button has been pressed
          elif (x < 15 and x > 14) and (y > 17 and y < 18):
             muted = not muted
             if muted:
@@ -136,11 +142,13 @@ def start():
             tetromino_list[0].move(key_typed, grid)
          elif key_typed == 'up' and not paused:
             rotated = tetromino_list[0].rotate(grid)
+         # if a hard dropping key 'h' has been pressed
          if key_typed == "h" and not paused:
             is_hard_dropped = True
             moved_down = True
             while moved_down:
                moved_down = tetromino_list[0].move("down", grid)
+         # if a reset key 'r' has been pressed
          if key_typed == "r":
             reset(False)
             continue
@@ -160,11 +168,13 @@ def start():
          # get the tile matrix of the tetromino without empty rows and columns
          # and the position of the bottom left cell in this matrix
          tiles, pos = tetromino_list[0].get_min_bounded_tile_matrix(True)
-         # update the game grid by locking the tiles of the landed tetromino 
+         # update the game grid by locking the tiles of the landed tetromino
+         # if update method returns true, the game is over
          if grid.update_grid(tiles, pos):
             grid.display(score, paused, muted, delay=delay)
             if not muted:
                loss.play()
+            # the end screen is shown until the user presses a home button
             grid.display_end_screen(score, is_loss=True)
             reset()
             difficulty = 1
@@ -176,9 +186,9 @@ def start():
                delay = 500
             restart_game = True
             
-         # get a list of tuples which contain coordinates of tiles that need to be merged
-         # each two tuples are to be merged, first being the one below, the second above
          if not restart_game:
+            # get a list of tuples which contain coordinates of tiles that need to be merged
+            # each two tuples are to be merged, the first one being the one below, the second above
             merges = grid.check_merge()
             grid.drop_the_clumps()
          if merges and not restart_game:
