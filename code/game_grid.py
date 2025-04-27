@@ -243,6 +243,8 @@ class GameGrid:
         # return the value of the game_over flag
         return self.game_over
 
+    # Checks if there are the same tiles on top of each other
+    # if it finds any, adds coordinates of both tiles to the list which is then returned
     def check_merge(self):
         n_rows, n_cols = self.grid_height, self.grid_width
         merges = []
@@ -263,7 +265,7 @@ class GameGrid:
 
         return merges
 
-    # Merges two tiles
+    # Merges two tiles (upper one is removed, lower one is doubled)
     def merge_tiles(self, row, col):
         cell = self.tile_matrix[row][col]
         if cell is not None:
@@ -300,7 +302,7 @@ class GameGrid:
                 self.get_connected_tiles((row, col + 1), tile_set, check_set)
             if (row, col - 1) not in check_set:
                 self.get_connected_tiles((row, col - 1), tile_set, check_set)
-    # Applies get_connected_tiles to (almost) all tiles and returns a complete list of floating clumps(set of not connected tiles)
+    # Applies get_connected_tiles to (almost) all tiles and returns a complete list of floating clumps (set of not connected tiles)
     def get_list_of_clumps(self):
         checked_tiles = set()
         total_clumps = []
@@ -311,7 +313,7 @@ class GameGrid:
                 if temp_set and not temp_set & self.bottom_boundries:
                     total_clumps.append(temp_set)
         return total_clumps
-    # Moves all the floating clumps down until atleast one is connected
+    # Moves all the floating clumps down until at least one is connected
     def drop_the_clumps(self):
         temp_list = self.get_list_of_clumps()
         while temp_list:
@@ -349,6 +351,7 @@ class GameGrid:
                 for j in range(n_cols):
                     self.tile_matrix[k][j] = self.tile_matrix[k + 1][j]
 
+    # Sums values of tiles in full rows
     def sum_scores_in_row(self, rows):
         cols = self.grid_width
         sum = 0
